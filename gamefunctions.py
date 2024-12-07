@@ -92,13 +92,13 @@ def new_random_monster():
         monster['money'] = random.randint(0, 5)
     if monster['name'] == 'Simp':
         monster['description'] = 'He\'s crouched in the corner.'
-        monster['health'] = random.randint(0,3)
+        monster['health'] = random.randint(1,3)
         monster['power'] = random.randint(0, 3)
         monster['money'] = random.randint(100, 1000)
     if monster['name'] == 'Blimp':
         monster['description'] = 'He\'s just floating around.'
         monster['health'] = random.randint(150, 200)
-        monster['power'] = random.randint(90, 100)
+        monster['power'] = random.randint(5, 8)
         monster['money'] = random.randint(1000, 20000)
         
     return monster
@@ -176,9 +176,91 @@ def print_shop_menu(item1Name, item1Price, item2Name, item2Price):
     print('\\', end='')
     print('-' * 22, end='')
     print('/')
+    
 
+def game_over():
+    '''
+    Handles the death of a player.
+
+    Paramaters:
+        None
+
+    Returns:
+        (Bool, Bool): A tuple of booleans, which track whether the
+            player wants to try again or quit the game entirely.
+    '''
+
+    user_input = ''
+    input('You died \n')
+    while not user_input in ['1', '2']:
+        print(
+             'What would you like to do? \n'
+             '1) Play again \n'
+             '2) Quit'
+              )
+        user_input = input('Select an option: ')
+        if not user_input in ['1', '2']:
+            input('Invalid input')
+        elif user_input == '1':
+            return (False, False)
+        elif user_input == '2':
+            return(True, False)
+            
+
+def fight_monster(player, monster):
+    '''
+    Initiates a fight between a player and a monster.
+
+    Paramaters:
+        player(dict): Player information
+        monster(dict): Monster information
+        
+
+    Returns:
+        None
+    '''
+    #Initializes an input
+    user_input = ''
+    leave = False
+    #Main fight loop
+    while user_input != '2' and not leave:
+        input(f'You\'re in combat with a {monster["name"]}\n')
+        input(
+              f'Your hp: {player["current_hp"]}\n'
+              f'Monster hp: {monster["health"]}\n'
+              )
+        
+        print(
+              'What do you want to do?\n\n'
+              '\t 1) Attack\n'
+              '\t 2) Run\n'
+              )
+        user_input = input('Choose 1 or 2: ')
+        if not user_input in ['1', '2']:
+            input('Invalid input')
+            
+        # Attack sequence
+        elif user_input == '1':
+            monster['health'] = monster['health'] - player['power']
+            player['current_hp'] = player['current_hp'] - monster['power']
+            
+            #Checks if player died
+            if player['current_hp'] <= 0:
+                leave = True
+            
+            #Checks if monster died
+            elif monster['health'] <= 0:
+                print('You are victorious')
+                player['gold'] += monster['money']
+                user_input = '2'
+        elif user_input == '2':
+            print('Got away safely')
+
+
+    
+    
 #Function Calls to demonstrate code functionality:
-#Note for Ian: use 'command 3' to comment out hilighted code blocks
+#Note for Ian: use 'control 3' to comment out highlighted code blocks
 
 
 def test_functions():
@@ -231,6 +313,27 @@ def test_functions():
     print('')
     print("print_shop_menu('Newt', 8.5, 'Mace of Extordinary Might', 100000000000)")
     print_shop_menu('Newt', 8.5, 'Mace of Extordinary Might', 100000000000)
+
+    print('')
+    print('')
+
+    print("game_over()")
+    
+    game_over()
+
+    print('')
+    print('')
+
+
+    player = {
+    'name':'',
+    'power':25,
+    'max_hp':100,
+    'current_hp':100,
+    'gold':20
+    }
+    print("fight_monster(player, new_random_monster())")
+    fight_monster(player, new_random_monster())
 
 if __name__ == '__main__':
     test_functions()
